@@ -42,6 +42,8 @@ parser.add_argument('-base', default=50, type=int, help='task')
 args = parser.parse_args()
 os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 args.log_dir=args.log_dir
+
+
 class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
@@ -174,7 +176,6 @@ def transfer_feature(model,model_old,train_loader, class_mean, args, task_id, nu
     optimizer = torch.optim.Adam(parameters_to_optimize, lr=0.002, betas=(0.9, 0.999))
 
     criterion = losses.create('triplet', margin=0, num_instances=8).cuda()
-    class_mean_best = []
     if args.data=='cifar100':
         epoch=50
     else:
@@ -248,7 +249,7 @@ def transfer_feature(model,model_old,train_loader, class_mean, args, task_id, nu
 
     torch.save(generator_old, os.path.join(save_path, 'task_' + str(task_id) + '_old' + '.t7'))
     torch.save(generator_current, os.path.join(save_path, 'task_' + str(task_id) + '_current' + '.t7'))
-    return class_mean
+    return class_mean_epoch
 
 for task_id in range(num_task):
 
